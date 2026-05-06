@@ -1,14 +1,6 @@
-# ============================================================================
-# SpotESIfy — Docker Compose
-# SSOO II · Escuela Superior de Informática · UCLM
-# ============================================================================
-# Un clon simplificado de Spotify con 4 servicios.
-# Levanta con: docker compose up -d
-# ============================================================================
-
 services:
 
-  # ── Nginx: Proxy inverso (puerta de entrada) ─────────────────────────────
+# ── Nginx: Proxy inverso
   nginx:
     image: nginx:alpine
     container_name: spotesify-nginx
@@ -23,7 +15,7 @@ services:
       - frontend
     restart: unless-stopped
 
-  # ── Web: Frontend (HTML/CSS/JS) ──────────────────────────────────────────
+# ── Web: Frontend
   web:
     build: ./web
     container_name: spotesify-web
@@ -33,7 +25,7 @@ services:
       - frontend
     restart: unless-stopped
 
-  # ── API: Backend Express.js ──────────────────────────────────────────────
+# ── API: Backend Express.js
   api:
     build: ./api
     container_name: spotesify-api
@@ -44,13 +36,16 @@ services:
       - REDIS_PASSWORD=spotesify123
       - MUSIC_DIR=/data/music
     volumes:
-      - ./music:/music
+      - ./music:/data/music
     networks:
       - frontend
-    mem_limit: 15m
+      - backend
+    mem_limit: 64m
+    depends_on:
+      - db
     restart: unless-stopped
 
-  # ── DB: Redis (almacén de metadatos y playlists) ─────────────────────────
+# ── DB: Redis
   db:
     image: redis:7-alpine
     container_name: spotesify-db
@@ -61,7 +56,7 @@ services:
       - backend
     restart: unless-stopped
 
-  # ── Worker: Recolector de métricas ───────────────────────────────────────
+# ── Worker: Recolector de métricas
   worker:
     build: ./worker
     container_name: spotesify-worker
@@ -72,16 +67,16 @@ services:
       - COLLECT_INTERVAL=3000
     networks:
       - backend
-    mem_limit: 10m
+    mem_limit: 64m
+    depends_on:
+      - db
     restart: unless-stopped
 
-# ── Redes ────────────────────────────────────────────────────────────────────
 networks:
   frontend:
     driver: bridge
   backend:
     driver: bridge
 
-# ── Volúmenes ────────────────────────────────────────────────────────────────
 volumes:
   redis_data:
