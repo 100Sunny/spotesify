@@ -1,0 +1,41 @@
+
+- name: Despliegue automático de SpotESIfy
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: 1. Instalar dependencias del sistema
+      apt:
+        name: [apt-transport-https, ca-certificates, curl, software-properties-common, python3-pip]
+        update_cache: yes
+
+    - name: 2. Instalar Docker y Docker Compose
+      apt:
+        name: [docker.io, docker-compose-v2]
+        state: present
+
+    - name: 3. Asegurar que Docker esté corriendo
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: 4. Construir y levantar el stack de SpotESIfy
+      community.docker.docker_compose_v2:
+        project_src: /home/alumno/spotesify
+        state: present
+        build: always
+
+    - name: 5. Ejecutar el seed de datos (Poblar Redis)
+      command: docker exec spotesify-api node seed.js
+      changed_when: false
+
+    - name: 6. Verificar salud del sistema
+      uri:
+        url: http://localhost:80
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 5
+      delay: 5
