@@ -1,11 +1,19 @@
 # SpotESIfy API — Dockerfile
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache curl 
+
+COPY package*.json ./
+RUN npm install --only=production
+
 COPY . .
 
-RUN npm install
+RUN addgroup -S spotesify && adduser -S spotesify -G spotesify && \
+    chown -R spotesify:spotesify /app
+
+USER spotesify
 
 EXPOSE 5000
 
