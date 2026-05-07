@@ -1,0 +1,43 @@
+============================================================
+ SpotESIfy — Informe del Checker
+ SSOO II · ESI · UCLM
+============================================================
+
+Fecha:      2026-05-07 13:33:25
+Hostname:   spotesify-vm
+MAC ID:     08:00:27:50:09:68
+Usuario:    alumno
+Kernel:     6.8.0-110-generic
+Docker:     29.1.3
+
+============================================================
+ RESULTADOS
+============================================================
+
+  ✅ [E1]   Web accesible a través del proxy
+  ✅ [E2]   API conectada a la base de datos
+  ✅ [E3]   Catálogo de canciones accesible (10 canciones)
+  ✅ [E4]   Streaming de audio funcional
+  ✅ [E5]   Contenedor API estable (0 reinicios)
+  ✅ [E6]   Imagen optimizada (52MB, user: spotesify)
+  ✅ [E7]   Healthcheck operativo
+  ✅ [E8]   Worker estable (0 reinicios)
+  ✅ [E9]   Arranque resiliente configurado
+
+============================================================
+ FLAGS
+============================================================
+
+  [E1]   5ab6edb2c23eb776
+  [E2]   2e4af2dac1669bc5
+  [E3]   79b97809d28fa80e
+  [E4]   f73cd2042615bebf
+  [E5]   aadbcebd15bd6c6b
+  [E6]   3591333a2d8994f5
+  [E7]   02dc49b21cf99565
+  [E8]   ea39f503fd8494ee
+  [E9]   26fdb65aeb997332
+
+  Integridad: 91d3ac458f5095d7fa049a81de7674d2
+
+============================================================
