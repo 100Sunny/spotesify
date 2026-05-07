@@ -13,7 +13,7 @@ services:
       - api
     networks:
       - frontend
-    restart: unless-stopped
+    restart: always
 
 # ── Web: Frontend
   web:
@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     networks:
       - frontend
-    restart: unless-stopped
+    restart: always
 
 # ── API: Backend Express.js
   api:
@@ -35,26 +35,33 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=spotesify123
       - MUSIC_DIR=/data/music
+      - REDIS_PASS=spotesify123
     volumes:
       - ./music:/data/music
     networks:
       - frontend
       - backend
     mem_limit: 64m
+    restart: always
     depends_on:
-      - db
-    restart: unless-stopped
+      db:
+        condition: service_healthy
 
 # ── DB: Redis
   db:
     image: redis:7-alpine
     container_name: spotesify-db
     command: redis-server --requirepass spotesify123
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "spotesify123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     volumes:
       - redis_data:/data
     networks:
       - backend
-    restart: unless-stopped
+    restart: always
 
 # ── Worker: Recolector de métricas
   worker:
@@ -65,12 +72,14 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=spotesify123
       - COLLECT_INTERVAL=3000
+      - REDIS_PASS=spotesify123
     networks:
       - backend
     mem_limit: 64m
+    restart: always
     depends_on:
-      - db
-    restart: unless-stopped
+      db:
+        condition: service_healthy
 
 networks:
   frontend:
